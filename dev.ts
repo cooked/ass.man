@@ -1,11 +1,19 @@
 import { createServer as createViteServer } from "vite";
+import path from "path";
 
 async function main() {
+  const engineDir = __dirname;
+  const workspaceDir = process.env.ASSMAN_WORKSPACE_PATH || process.cwd();
+
   const { app, startServer } = await import("./server");
 
   const vite = await createViteServer({
+    root: engineDir,
     server: {
       middlewareMode: true,
+      fs: {
+        allow: [engineDir, workspaceDir]
+      },
       watch: {
         ignored: ["**/data/**"],
       },

@@ -5,6 +5,7 @@ import { SpreadsheetGrid } from "./components/SpreadsheetGrid";
 import { KitManagerView } from "./components/KitManagerView";
 import { CustomersMapView } from "./components/CustomersMapView";
 import { UsersAndCustomersView } from "./components/UsersAndCustomersView";
+import { FirmwareManagerView } from "./components/FirmwareManagerView";
 import { SettingsView } from "./components/SettingsView";
 import { MobilePairingModal } from "./components/MobilePairingModal";
 import { MobileCompanionView } from "./components/MobileCompanionView";
@@ -18,6 +19,7 @@ export default function App() {
   const [schemas, setSchemas] = useState<AssetSchema[]>([]);
   const [activeTab, setActiveTab] = useState<string>("");
   const [isSettingsActive, setIsSettingsActive] = useState<boolean>(false);
+  const [appConfig, setAppConfig] = useState<any>(null);
 
   // Dynamic Assets Map: entityType -> array of assets
   const [assetsByType, setAssetsByType] = useState<Record<string, any[]>>({});
@@ -60,6 +62,7 @@ export default function App() {
 
       setViews(viewsData);
       setSchemas(schemasData);
+      setAppConfig(configData);
 
       if (viewsData.length > 0 && (!activeTab || !viewsData.some(v => v.id === activeTab))) {
         setActiveTab(viewsData[0].id);
@@ -186,6 +189,7 @@ export default function App() {
         activeLocksCount={activeLocks.length}
         currentUser={currentUser}
         userRole={userRole}
+        appConfig={appConfig}
       />
 
       {/* Main Workspace Area */}
@@ -260,6 +264,36 @@ export default function App() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(kit)
                   });
+                }}
+                onRefresh={loadData}
+              />
+            )}
+
+            
+            {currentView.renderer === "firmware-manager" && (
+              <FirmwareManagerView
+                firmwares={assetsByType["firmware"] || []}
+                sensors={assetsByType["sensor"] || assetsByType["gear"] || []}
+                onSaveFirmware={async (fw) => {
+                  await fetch(`/api/assets/firmware/${fw.fw_code}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(fw)
+                  });
+                  loadData();
+                }}
+                onBatchUpgradeSensors={async (sensorType, fromVersion, toVersion) => {
+                  const targetSensors = (assetsByType["sensor"] || []).filter(
+                    s => s.sensor_type === sensorType && s.fw_version === fromVersion
+                  );
+                  for (const s of targetSensors) {
+                    await fetch(`/api/assets/sensor/${s.serial_number}`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ ...s, fw_version: toVersion })
+                    });
+                  }
+                  loadData();
                 }}
                 onRefresh={loadData}
               />

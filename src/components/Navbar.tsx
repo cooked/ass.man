@@ -14,6 +14,12 @@ interface NavbarProps {
   activeLocksCount: number;
   currentUser: string;
   userRole: string;
+  appConfig?: {
+    appName?: string;
+    appShortName?: string;
+    appSubtitle?: string;
+    brandColor?: string;
+  };
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -23,6 +29,11 @@ const iconMap: Record<string, React.ReactNode> = {
   QrCode: <QrCode className="w-4 h-4" />,
   Users: <Users className="w-4 h-4" />
 };
+
+  const shortName = appConfig?.appShortName || (appConfig?.appName?.toUpperCase().includes("BONFIGLIOLI") ? "BOM" : "ass.man");
+  const appName = appConfig?.appName || "Asset Manager";
+  const subtitle = appConfig?.appSubtitle || (shortName === "BOM" ? "Piattaforma Tracciamento Sensori IoT, Kit & Impianti" : "Schema-Driven Orchestration & Field Terminal");
+  const isRose = appConfig?.brandColor === "rose" || shortName === "BOM";
 
 export const Navbar: React.FC<NavbarProps> = ({
   views,
@@ -35,7 +46,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   isSettingsActive,
   activeLocksCount,
   currentUser,
-  userRole
+  userRole,
+  appConfig
 }) => {
   return (
     <header className="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
@@ -44,17 +56,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2.5">
-              <span className="bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 text-white font-mono font-black text-base px-2.5 py-1 rounded-lg tracking-wider shadow-md shadow-indigo-950/50 border border-indigo-400/20">
-                ass.man
+              <span className={`text-white font-mono font-black text-base px-2.5 py-1 rounded-lg tracking-wider shadow-md border ${
+                isRose
+                  ? "bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700 shadow-rose-950/50 border-rose-400/20"
+                  : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 shadow-indigo-950/50 border-indigo-400/20"
+              }`}>
+                {shortName}
               </span>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h1 className="text-sm font-bold text-white tracking-tight">Asset Manager</h1>
-                  <span className="text-[10px] font-mono uppercase bg-slate-800 text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20">
-                    Engine
+                  <h1 className="text-sm font-bold text-white tracking-tight">{appName}</h1>
+                  <span className={`text-[10px] font-mono uppercase bg-slate-800 px-1.5 py-0.5 rounded border ${
+                    isRose ? "text-rose-400 border-rose-500/20" : "text-indigo-400 border-indigo-500/20"
+                  }`}>
+                    {shortName === "BOM" ? "Asset Engine" : "Engine"}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400">Schema-Driven Orchestration & Field Terminal</p>
+                <p className="text-[11px] text-slate-400">{subtitle}</p>
               </div>
             </div>
           </div>
@@ -69,9 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={v.id}
                   onClick={() => onSelectView(v.id)}
                   className={`flex items-center space-x-2 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all duration-150 cursor-pointer ${
-                    isActive
-                      ? "bg-indigo-600 text-white shadow-sm shadow-indigo-900/50"
-                      : "text-slate-300 hover:text-white hover:bg-slate-800/70"
+                    isActive ? (isRose ? "bg-rose-600 text-white shadow-sm shadow-rose-900/50" : "bg-indigo-600 text-white shadow-sm shadow-indigo-900/50") : "text-slate-300 hover:text-white hover:bg-slate-800/70"
                   }`}
                 >
                   {icon}

@@ -23,13 +23,13 @@ function printHelp() {
   assman [command] [options]
 
 Commands:
-  serve                 Launch the asset management engine & Web AR terminal
+  serve                 Launch production asset engine
   dev                   Start development server with live Vite HMR
   init [directory]      Scaffold a fresh ass.man asset workspace
   version               Display version info
   help                  Show this help reference
 
-Options for 'serve':
+Options for 'serve' and 'dev':
   --port <number>       HTTP port (default: 3100)
   --https-port <number> HTTPS port for mobile camera stream (default: 3101)
   --schemas <dir>       Path to JSON schemas directory (default: ./schemas)
@@ -37,9 +37,9 @@ Options for 'serve':
   --data <dir>          Path to JSON asset storage directory (default: ./data)
 
 Examples:
-  npx assman init my-adventure-pack
-  npx assman serve --schemas ./custom-schemas --data ./custom-data
-  npx assman
+  assman dev
+  assman serve --port 3100
+  assman init my-adventure-pack
 `);
 }
 
@@ -53,10 +53,12 @@ if (args.includes("--version") || args.includes("-v") || command === "version") 
   process.exit(0);
 }
 
+const callerDir = process.cwd();
+
 if (command === "init") {
   printBanner();
   const targetDir = args[1] || "./assman-project";
-  const absTarget = path.resolve(process.cwd(), targetDir);
+  const absTarget = path.resolve(callerDir, targetDir);
 
   console.log(`\x1b[32m✔\x1b[0m Initializing new ass.man workspace in: \x1b[1m${absTarget}\x1b[0m`);
 
@@ -64,7 +66,6 @@ if (command === "init") {
   fs.mkdirSync(path.join(absTarget, "views"), { recursive: true });
   fs.mkdirSync(path.join(absTarget, "data"), { recursive: true });
 
-  // Copy sample schemas & views
   const sampleSchemasDir = path.join(__dirname, "../schemas");
   const sampleViewsDir = path.join(__dirname, "../views");
 
@@ -91,17 +92,32 @@ if (command === "init") {
   console.log(`
 \x1b[32m✔ Success!\x1b[0m Project initialized. To start managing assets:
   cd ${targetDir}
-  npx assman serve
+  npx assman dev
 `);
   process.exit(0);
 }
 
-// Parse serve options
+// Parse options
 let httpPort = 3100;
 let httpsPort = 3101;
 let schemasPath = "./schemas";
 let viewsPath = "./views";
 let dataPath = "./data";
+
+// Read app-config.json in callerDir if exists
+const callerConfigPath = path.join(callerDir, "app-config.json");
+if (fs.existsSync(callerConfigPath)) {
+  try {
+    const cfg = JSON.parse(fs.readFileSync(callerConfigPath, "utf-8"));
+    if (cfg.port) httpPort = cfg.port;
+    if (cfg.httpPort) httpPort = cfg.httpPort;
+    if (cfg.httpsPort) httpsPort = cfg.httpsPort;
+    if (cfg.schemasPath) schemasPath = cfg.schemasPath;
+    if (cfg.viewsPath) viewsPath = cfg.viewsPath;
+    if (cfg.dataPath) dataPath = cfg.dataPath;
+    if (cfg.storagePath) dataPath = cfg.storagePath;
+  } catch {}
+}
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === "--port" && args[i + 1]) httpPort = parseInt(args[i + 1], 10);
@@ -111,21 +127,30 @@ for (let i = 0; i < args.length; i++) {
   if (args[i] === "--data" && args[i + 1]) dataPath = args[i + 1];
 }
 
-process.env.ASSMAN_HTTP_PORT = String(httpPort);
+const absSchemas = path.resolve(callerDir, schemasPath);
+const absViews = path.resolve(callerDir, viewsPath);
+const absData = path.resolve(callerDir, dataPath);
+
+process.env.PORT = String(httpPort);
+process.env.HTTPS_PORT = String(httpsPort);
+process.env.ASSMAN_PORT = String(httpPort);
 process.env.ASSMAN_HTTPS_PORT = String(httpsPort);
-process.env.ASSMAN_SCHEMAS_PATH = schemasPath;
-process.env.ASSMAN_VIEWS_PATH = viewsPath;
-process.env.ASSMAN_DATA_PATH = dataPath;
+process.env.ASSMAN_WORKSPACE_PATH = callerDir;
+process.env.ASSMAN_SCHEMAS_PATH = absSchemas;
+process.env.ASSMAN_VIEWS_PATH = absViews;
+process.env.ASSMAN_DATA_PATH = absData;
+process.env.ASSMAN_CONFIG_PATH = callerConfigPath;
 
 printBanner();
-console.log(`\x1b[34mℹ\x1b[0m Binding Schemas: \x1b[1m${path.resolve(process.cwd(), schemasPath)}\x1b[0m`);
-console.log(`\x1b[34mℹ\x1b[0m Binding Storage: \x1b[1m${path.resolve(process.cwd(), dataPath)}\x1b[0m`);
+console.log(`\x1b[34mℹ\x1b[0m Workspace Directory: \x1b[1m${callerDir}\x1b[0m`);
+console.log(`\x1b[34mℹ\x1b[0m Binding Schemas:     \x1b[1m${absSchemas}\x1b[0m`);
+console.log(`\x1b[34mℹ\x1b[0m Binding Storage:     \x1b[1m${absData}\x1b[0m`);
 
-const rootDir = path.resolve(__dirname, "..");
+const engineDir = path.resolve(__dirname, "..");
 const script = command === "dev" ? "npm run dev" : "npm start";
 
 const child = spawn("npm", ["run", command === "dev" ? "dev" : "start"], {
-  cwd: rootDir,
+  cwd: engineDir,
   stdio: "inherit",
   env: process.env
 });

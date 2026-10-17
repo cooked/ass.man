@@ -221,4 +221,82 @@ export class StorageEngine {
 
     return Array.from(new Set(codes));
   }
+
+  public ingestScannedBatch(params: {
+    serials: string[];
+    sensorType?: string;
+    hwVersion?: string;
+    fwVersion?: string;
+    targetMode?: "in_stock" | "in_kit";
+    targetKitId?: string;
+    entityType?: string;
+  }): { importedCount: number; updatedCount: number; results: any[] } {
+    const { serials, sensorType, hwVersion, fwVersion, targetMode, targetKitId } = params;
+    const entityType = params.entityType || (this.getSchema("sensor") ? "sensor" : "gear");
+    const existingItems = this.getAssets(entityType);
+    const pk = entityType === "gear" ? "code" : "serial_number";
+    const existingMap = new Map<string, any>(existingItems.map(s => [s[pk], s]));
+
+    let importedCount = 0;
+    let updatedCount = 0;
+    const results: any[] = [];
+    const today = new Date().toISOString().split("T")[0];
+
+    for (const sn of serials) {
+      const trimmedSn = sn.trim();
+      if (!trimmedSn) continue;
+
+      const existing = existingMap.get(trimmedSn);
+      let record: any;
+
+      if (existing) {
+        record = {
+          ...existing,
+          hw_version: hwVersion || existing.hw_version,
+          fw_version: fwVersion || existing.fw_version,
+          scan_date: today,
+          status: targetMode === "in_kit" && targetKitId ? "in_kit" : (targetMode === "in_stock" ? "in_stock" : existing.status),
+          kit_id: targetMode === "in_kit" && targetKitId ? targetKitId : (targetMode === "in_stock" ? "" : existing.kit_id)
+        };
+        updatedCount++;
+      } else {
+        if (entityType === "gear") {
+          record = {
+            code: trimmedSn,
+            name: `Scanned Item ${trimmedSn}`,
+            category: "Camping",
+            condition: "Good",
+            weight_kg: 1.0,
+            status: targetMode === "in_kit" && targetKitId ? "packed" : "ready"
+          };
+        } else {
+          let inferredType = sensorType || "TP";
+          const upper = trimmedSn.toUpperCase();
+          if (upper.includes("-Z-") || upper.startsWith("Z-")) inferredType = "Z";
+          else if (upper.includes("-TP-") || upper.startsWith("TP-")) inferredType = "TP";
+          else if (upper.includes("-SIGMA-") || upper.startsWith("SIGMA-")) inferredType = "Sigma";
+          else if (upper.includes("-OMEGA-") || upper.startsWith("OMEGA-")) inferredType = "Omega";
+
+          record = {
+            serial_number: trimmedSn,
+            sensor_type: inferredType,
+            hw_version: hwVersion || "v1.2",
+            fw_version: fwVersion || "1.4.0",
+            status: targetMode === "in_kit" && targetKitId ? "in_kit" : "in_stock",
+            kit_id: targetMode === "in_kit" && targetKitId ? targetKitId : "",
+            customer_id: "",
+            scan_date: today,
+            notes: `Ingested via scanner on ${today}`
+          };
+        }
+        importedCount++;
+      }
+
+      this.saveAsset(entityType, trimmedSn, record);
+      results.push(record);
+    }
+
+    return { importedCount, updatedCount, results };
+  }
+
 }
