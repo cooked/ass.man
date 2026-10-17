@@ -3,7 +3,7 @@
 # 📦 ass.man
 ### *Asset Manager Engine*
 
-**The schema-driven, zero-database asset orchestration engine & Web AR field terminal.**
+**A schema-driven, file-based asset manager with mobile barcode scanning and declarative views.**
 
 [![CI](https://github.com/ale/ass.man/actions/workflows/ci.yml/badge.svg)](https://github.com/ale/ass.man/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -12,89 +12,84 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](tsconfig.json)
 
 <p align="center">
-  <a href="#-why-assman">Why ass.man</a> •
-  <a href="#-steelman-comparative-analysis">Steelman Comparison</a> •
+  <a href="#-overview">Overview</a> •
+  <a href="#-is-assman-right-for-you">Comparison & Trade-offs</a> •
   <a href="#-quickstart">Quickstart</a> •
   <a href="#-how-it-works">How It Works</a> •
-  <a href="#-starter-domain-friends-places--gear">Starter Domain</a> •
-  <a href="#-web-ar-companion">Web AR Companion</a> •
-  <a href="#-distribution--deployment">Distribution</a>
+  <a href="#-sample-domain">Sample Domain</a> •
+  <a href="#-mobile-companion-scanner">Mobile Scanner</a>
 </p>
 
 </div>
 
 ---
 
-## ⚡ The Big Idea
+## 📖 Overview
 
-Most asset management tools force a false choice:
-1. **Heavy Enterprise Systems** (like Snipe-IT) requiring relational databases, complex migrations, rigid relational schemas, and heavyweight hosting.
-2. **Generic Headless CMS / No-Code Spreadsheets** (like Directus or NocoDB) that lack hardware-native features like real-time DataMatrix computer vision, kit slot validation, and lock concurrency.
-3. **Static GitCMS tools** (like TinaCMS) which are built for marketing websites and lack physical asset lifecycle workflows.
+`ass.man` is a lightweight asset management tool designed for teams tracking physical equipment, modular kits, and locations without the operational overhead of a relational database.
 
-**`ass.man`** bridges this divide. It treats your filesystem as the source of truth, uses standard **JSON Schemas** to define entities, renders views through **declarative JSON templates**, and includes an instant **zero-install Web AR scanner** for any smartphone camera.
+Instead of running database migrations, you define your entity types with standard **JSON Schemas** (`draft-07`) and layout your screens with **declarative view templates**. All records are saved directly to disk as human-readable JSON files that you can inspect, edit, or commit to Git.
 
 ```
-                    ┌──────────────────────────┐
-                    │   JSON Schema Metamodel  │  schemas/*.schema.json
-                    └────────────┬─────────────┘
-                                 │
-     ┌───────────────────────────┼───────────────────────────┐
-     ▼                           ▼                           ▼
-┌──────────────┐         ┌──────────────┐            ┌──────────────┐
-│ Declarative  │         │ Zero-DB File │            │ Web AR Field │
-│ UI Templates │         │ Storage      │            │ Companion    │
-│ views/*.json │         │ data/*.json  │            │ Live ZXing   │
-└──────────────┘         └──────────────┘            └──────────────┘
+ schemas/*.schema.json   ──►  Metamodel & Relations
+ views/*.view.json       ──►  UI Layout (Grids, Maps, Kit Composer)
+ data/*/*.json           ──►  Plain JSON File Storage (Git-friendly)
+ Mobile Viewfinder       ──►  In-browser Barcode & DataMatrix Scanner
 ```
 
 ---
 
-## ⚖️ Steelman Comparative Analysis
+## ⚖️ Is ass.man right for you?
 
-To evaluate `ass.man` honestly, we steelman existing industry solutions, highlighting where they excel and where `ass.man` takes a fundamentally different architectural path:
+Different tools solve different operational problems. Here is an honest, objective breakdown to help you decide if `ass.man` fits your requirements:
 
-| Feature Dimension | **Snipe-IT** | **Directus / NocoDB** | **TinaCMS / Decap** | **ass.man (This Project)** |
+| Dimension | **Snipe-IT** | **Directus / NocoDB** | **TinaCMS / Flat-file CMS** | **ass.man** |
 | :--- | :--- | :--- | :--- | :--- |
-| **Data Layer** | MySQL / MariaDB (Relational) | PostgreSQL / SQLite / MySQL | Git repository (Markdown/JSON) | **Zero-DB File System / Git-native JSON** |
-| **Schema Definition** | Fixed DB migrations & custom fields table | Visual GUI UI / DB introspection | Config YAML / TS code schemas | **Standard JSON Schema (`draft-07`)** |
-| **UI Customization** | Monolithic Blade templates | Pre-baked Dashboard widgets | React components in site code | **Declarative View Templates (`*.view.json`)** |
-| **Physical Barcode / AR** | Basic 2D barcode generator | None (manual text inputs) | None | **Live Web AR viewfinder with DataMatrix tracking** |
-| **Kit Slot Validation** | Simple asset bundling | Relational joins (manual queries) | None | **First-class slot composer with spec validation** |
-| **Concurrency** | DB row locks | Optimistic concurrency / DB locks | Git merge conflicts | **Real-time TTL Collaborative File Locks** |
-| **Deployment Footprint** | PHP + Composer + MySQL + Redis | Node.js / Docker + External DB | Static build or Node process | **Single binary / 1-line `npx` / Alpine Docker** |
+| **Primary Focus** | Corporate IT Asset Management | General-purpose Database GUI | Web content & Jamstack | Physical gear, modular kits & field scanning |
+| **Data Storage** | MySQL / MariaDB | PostgreSQL / MySQL / SQLite | Git repository (Markdown/JSON) | Local filesystem (Plain JSON files) |
+| **Schema Definition** | Fixed tables + custom field GUI | Visual DB table builder | Config YAML / TS code schemas | Standard JSON Schema (`*.schema.json`) |
+| **UI Views** | Pre-built ITAM views | Dynamic tables & dashboards | Inline visual CMS blocks | Declarative templates (`*.view.json`) |
+| **Barcode / Scanner** | Barcode label generation | Manual input / third-party | None | In-browser camera scanner with visual tracking |
+| **Kit Composition** | Basic parent-child bundling | Relational joins | None | Slot-based pack builder with type validation |
+| **Concurrency** | Database row locks | Optimistic DB concurrency | Git merge conflicts | Real-time TTL collaborative file locks |
+| **Hosting Footprint** | PHP + Web server + MySQL | Node.js / Docker + SQL database | Static build or Node service | Single Node process / Docker container |
 
-### 1. Versus Snipe-IT (The IT Asset Heavyweight)
-* **Steelman for Snipe-IT**: Snipe-IT is mature, battle-tested, handles depreciation, purchasing orders, warranty lifecycles, and has LDAP/SAML integrations.
-* **Why ass.man is different**: Snipe-IT requires managing a MySQL database, PHP-FPM, migrations, and a rigid data model. `ass.man` starts instantly with `npx assman serve`, stores raw readable JSON files you can inspect with `git diff`, and adapts to *any* physical domain (from friends' camping packs to high-tech IoT hardware).
+---
 
-### 2. Versus Directus & NocoDB (The Modern Headless CMS / Smart Spreadsheets)
-* **Steelman for Directus/NocoDB**: Directus provides an exceptional REST/GraphQL API layer over any SQL database with fine-grained role permissions.
-* **Why ass.man is different**: Directus is general-purpose content management. `ass.man` is purposefully engineered for physical hardware operations: modular kit verification, field companion pairing via QR code, live camera DataMatrix bounding-box tracking, and collaborative multi-user editing with visual lock indicators.
+### ❌ When you should choose an alternative
 
-### 3. Versus TinaCMS & Git-backed CMSs
-* **Steelman for TinaCMS**: Outstanding inline visual editing experience for content-heavy Jamstack websites.
-* **Why ass.man is different**: Tina is optimized for publishing web pages and blog posts. `ass.man` is optimized for asset registries, geographic mapping of facilities and destinations, hardware firmware deployment tracking, and warehouse shelf scanning.
+* **Choose Snipe-IT** if you need formal IT Asset Management features: financial depreciation tables, purchasing/procurement tracking, software license compliance, check-in/check-out signatures, or corporate LDAP/SAML integration.
+* **Choose Directus or NocoDB** if your project requires a relational database backend (PostgreSQL/MySQL), complex SQL queries, stored procedures, strict ACID transactions, or datasets with hundreds of thousands of records.
+* **Choose TinaCMS or Decap CMS** if you are building an editorial website, blog, or documentation portal where content consists of Markdown documents and rich text media.
+* **Avoid ass.man** if you require fine-grained role-based access control (RBAC) per database column, multi-tenant organization tenancy, or strict audit compliance logs out of the box.
+
+---
+
+### ✔️ When ass.man is a good fit
+
+* **Zero-database setup**: You want a tool that starts in seconds with `npx` or Docker without provisioning, configuring, or maintaining a SQL server.
+* **Git-native, file-based data**: You want your inventory records stored as readable JSON files that can be version-controlled, diffed, backed up via standard file tools, or scripted with `jq` and Python.
+* **Custom domain in minutes**: You want to model your own entities (e.g. tools, climbing gear, cameras, IoT prototypes) simply by creating JSON Schema files, without database migrations.
+* **Modular kit & pack validation**: You bundle items into kits or activity packs and need to verify required slots (e.g. *1x Camping, 1x Audio*) before dispatch.
+* **Zero-install mobile scanning**: You want technicians or team members to scan DataMatrix codes or barcodes on warehouse shelves using their smartphone camera without installing an app from an app store.
 
 ---
 
 ## 🚀 Quickstart
 
-You have four frictionless ways to run `ass.man`:
-
-### Option A: The 1-Line Zero-Install CLI (Recommended)
+### Option 1: CLI (Zero Install)
 ```bash
-# Initialize a new workspace in your current directory
-npx assman init my-assets
+# Initialize a new workspace with starter schemas
+npx assman init my-inventory
 
-# Launch the server & Web AR terminal
-cd my-assets
+# Start the server and view templates
+cd my-inventory
 npx assman serve
 ```
 Open [http://localhost:3100](http://localhost:3100) in your browser.
 
-### Option B: Docker Container
-Mount your own local directories into the pre-built multi-arch container:
+### Option 2: Docker
+Mount your local directories into the pre-built container:
 ```bash
 docker run -d \
   -p 3100:3100 \
@@ -106,14 +101,7 @@ docker run -d \
   ghcr.io/ale/ass.man:latest
 ```
 
-### Option C: Standalone Single Executable
-Download the pre-compiled binary for macOS (Apple Silicon / Intel) or Linux from [GitHub Releases](https://github.com/ale/ass.man/releases):
-```bash
-chmod +x assman-macos-arm64
-./assman-macos-arm64 --schemas ./my-schemas --data ./my-data
-```
-
-### Option D: Git Clone & Local Development
+### Option 3: Local Clone
 ```bash
 git clone https://github.com/ale/ass.man.git
 cd ass.man
@@ -125,8 +113,8 @@ npm run dev
 
 ## 🧩 How It Works
 
-### 1. Define Your Entities (`schemas/*.schema.json`)
-Every entity is a clean standard JSON Schema with custom metadata:
+### 1. Define Entities (`schemas/*.schema.json`)
+Entities are standard JSON Schema (`draft-07`) files with relation definitions:
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -150,24 +138,22 @@ Every entity is a clean standard JSON Schema with custom metadata:
 }
 ```
 
-### 2. Configure Your Views (`views/*.view.json`)
-No front-end code required. Simply declare which renderer to use:
-* **`spreadsheet-grid`**: High-density virtualized table with search, sorting, column formatters, and drawer inspectors.
-* **`kit-manager`**: Slot-based pack and modular kit composer with real-time specification validation.
-* **`customers-map`**: Interactive Leaflet map plotting coordinates with pins, badges, and filters.
-* **`users-manager`**: People and role directory.
+### 2. Declare Views (`views/*.view.json`)
+Views define how data is presented in the web UI. Supported renderers include:
+* **`spreadsheet-grid`**: Virtualized table with column filtering, multi-sort, search, and drawer editor.
+* **`kit-manager`**: Slot-based pack builder with specification checklists.
+* **`customers-map`**: Interactive Leaflet map plotting latitude and longitude coordinates.
+* **`users-manager`**: Team and contact directory.
 
-Example View Template:
+Example View:
 ```json
 {
   "id": "gear-inventory",
   "title": "Gear Inventory",
   "targetAsset": "gear",
-  "icon": "Cpu",
   "renderer": "spreadsheet-grid",
   "config": {
     "searchable": true,
-    "defaultSort": { "field": "code", "order": "asc" },
     "columns": [
       { "field": "code", "label": "Code", "width": 160, "renderer": "mono-badge", "pinned": true },
       { "field": "name", "label": "Item Name", "width": 240, "renderer": "text" },
@@ -179,7 +165,7 @@ Example View Template:
 ```
 
 ### 3. File System Storage (`data/`)
-Assets are stored directly as plain JSON files:
+Each asset record is saved as an individual JSON file:
 ```
 data/
 ├── gear/
@@ -191,82 +177,55 @@ data/
 └── adventures/
     └── ADV-ALPINE-TREK.json
 ```
-Edit them in VS Code, commit them with Git, backup with rsync, or query them with `jq`!
 
 ---
 
-## ⛺ Starter Domain: Friends, Places & Gear
+## ⛺ Sample Domain: Friends, Places & Gear
 
-To demonstrate `ass.man` in an intuitive, relatable context, the repository ships with a complete ready-to-run domain:
+To help you explore the features right away, the repository includes a sample domain:
 
-1. **Friends & Crew (`people/`)**: Alex Rivers (*The Navigator*), Elena Vance (*The Photographer*), Marco Rossi (*The Chef*), Sofia Chen (*The DJ*).
-2. **Places & Destinations (`places/`)**: Alpine Refuges, Lakeside Camps, Hidden Beach Coves, and Retro Lounges plotted on an interactive Leaflet map.
-3. **Shared Gear (`gear/`)**: Cameras, Ultralight Tents, Jetboil Stoves, Synthesizers, and Harnesses tagged with DataMatrix codes.
-4. **Adventures & Activity Packs (`adventures/`)**: Custom packs with required equipment slots (e.g. *1x Camping, 1x Photography, 1x Audio*) verified in real-time.
+1. **Crew Directory (`people/`)**: Members with roles, availability, and contact info.
+2. **Places & Hangouts (`places/`)**: Destinations with real GPS coordinates plotted on the interactive Leaflet map.
+3. **Shared Gear (`gear/`)**: Outdoor and electronic items tagged with barcodes and DataMatrix codes.
+4. **Adventure Packs (`adventures/`)**: Packs with required equipment slots validated in real time.
 
 ---
 
-## 📱 Web AR Companion
+## 📱 Mobile Companion Scanner
 
-Turn any smartphone into a warehouse scanner without installing an app:
+Any smartphone can act as a field scanner:
 
 1. Click **Pair Phone** in the top navigation bar.
 2. Scan the on-screen QR code with your phone.
-3. Your mobile browser immediately opens the **Field Companion Viewfinder**:
-   * **Real-time DataMatrix & Barcode Recognition** via ZXing computer vision.
-   * **Visual Tracking Markers**: High-contrast animated brackets overlaid directly on detected codes in the live feed.
-   * **Auditory & Haptic Feedback**: Beeps and vibrations on successful detection.
-   * **Pack Slot Assignment**: Point the camera at a gear item tag to automatically fill the active adventure slot.
+3. The mobile browser opens the camera scanner:
+   * **Real-time Recognition**: Decodes DataMatrix and 1D/2D barcodes using ZXing.
+   * **Visual Tracking Markers**: Overlays green tracking brackets directly onto detected codes in the video feed.
+   * **Slot Assignment**: In pack mode, scanning an item automatically fills the active slot in the kit.
 
 ---
 
-## 🔒 Collaborative Editing & Concurrency
+## 🔒 Collaborative File Locks
 
-`ass.man` provides non-blocking, multi-user safety:
-* **Active Locks**: When an operator edits an asset, a temporary TTL lock is registered in `data/.locks`.
-* **Visual Lock Badges**: Other teammates see lock badges in real time, preventing concurrent overwrites.
-* **Administrator Override**: Admins can force-release stale locks with one click in the Settings drawer.
+To avoid conflicting edits when multiple people access the same data:
+* Opening an item for editing creates a temporary lock file in `data/.locks`.
+* Other users see a lock indicator displaying who is currently editing the item and how long the lock will remain active.
+* Locks automatically expire after the configured TTL (default: 10 minutes) or can be released manually by an administrator.
 
 ---
 
-## 📦 Distribution & Deployment
+## ⚙️ Configuration
 
-### Environment Configuration
-The core engine honors standard environment variables:
+Environment variables:
 ```bash
-ASSMAN_PORT=3100                  # HTTP web port
-ASSMAN_HTTPS_PORT=3101            # HTTPS port for secure mobile camera streaming
-ASSMAN_SCHEMAS_PATH=./schemas     # Directory containing *.schema.json
-ASSMAN_VIEWS_PATH=./views         # Directory containing *.view.json
+ASSMAN_PORT=3100                  # HTTP port (default: 3100)
+ASSMAN_HTTPS_PORT=3101            # HTTPS port for mobile camera access (default: 3101)
+ASSMAN_SCHEMAS_PATH=./schemas     # Directory for *.schema.json files
+ASSMAN_VIEWS_PATH=./views         # Directory for *.view.json files
 ASSMAN_DATA_PATH=./data           # Storage directory
-```
-
-### First-Boot Onboarding Wizard
-If you start `ass.man` with an empty `schemas/` directory, the engine automatically presents a **First-Boot Wizard** offering 1-click starter template injection:
-* ⛺ **Friends, Places & Gear** (Universal community starter)
-* 🏭 **Industrial IoT & Hardware BOM** (Sensors, Modular Kits & Firmware)
-* 🖥️ **IT & Datacenter Infrastructure** (Servers, Workstations & Racks)
-* 📝 **Custom Blank Slate**
-
----
-
-## 🤝 Contributing
-
-`ass.man` is an open-source community effort. We welcome contributions for:
-* New declarative view renderers (Kanban boards, Timeline / Gantt, Hierarchy trees).
-* Storage drivers (S3 / Git Sync adapters).
-* Community schema packs.
-
-```bash
-# Fork & clone
-git clone https://github.com/ale/ass.man.git
-cd ass.man
-npm install
-npm run dev
 ```
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
+Distributed under the [MIT License](LICENSE).
