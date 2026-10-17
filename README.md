@@ -5,7 +5,7 @@
 
 **A schema-driven, file-based asset manager with mobile barcode scanning and declarative views.**
 
-[![CI](https://github.com/ale/ass.man/actions/workflows/ci.yml/badge.svg)](https://github.com/ale/ass.man/actions)
+[![CI](https://github.com/cooked/ass.man/actions/workflows/ci.yml/badge.svg)](https://github.com/cooked/ass.man/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-brightgreen.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](Dockerfile)
@@ -85,12 +85,12 @@ docker run -d \
   -v $(pwd)/views:/app/views \
   -v $(pwd)/data:/app/data \
   --name assman \
-  ghcr.io/ale/ass.man:latest
+  ghcr.io/cooked/ass.man:latest
 ```
 
 ### Option 3: Local Clone
 ```bash
-git clone https://github.com/ale/ass.man.git
+git clone https://github.com/cooked/ass.man.git
 cd ass.man
 npm install
 npm run dev
