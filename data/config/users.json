@@ -1,0 +1,22 @@
+[
+  {
+    "username": "Alex Rivers",
+    "role": "Organizer",
+    "email": "alex@example.com"
+  },
+  {
+    "username": "Elena Vance",
+    "role": "Member",
+    "email": "elena@example.com"
+  },
+  {
+    "username": "Marco Rossi",
+    "role": "Member",
+    "email": "marco@example.com"
+  },
+  {
+    "username": "Sofia Chen",
+    "role": "Admin",
+    "email": "sofia@example.com"
+  }
+]

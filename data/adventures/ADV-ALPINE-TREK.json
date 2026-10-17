@@ -1,0 +1,30 @@
+{
+  "adventure_code": "ADV-ALPINE-TREK",
+  "title": "Dolomites Autumn Sunrise Trek",
+  "destination_id": "dolomites-refuge",
+  "organizer_id": "alex-rivers",
+  "date": "2026-10-24",
+  "difficulty": "Moderate",
+  "status": "ready_to_go",
+  "expected_spec": "1 x Camping, 1 x Photography, 1 x Audio",
+  "slots": [
+    {
+      "slotId": 1,
+      "requiredType": "Camping",
+      "filledWithSerial": "GEAR-TENT-201",
+      "isFilled": true
+    },
+    {
+      "slotId": 2,
+      "requiredType": "Photography",
+      "filledWithSerial": "GEAR-CAM-101",
+      "isFilled": true
+    },
+    {
+      "slotId": 3,
+      "requiredType": "Audio",
+      "filledWithSerial": "GEAR-SPK-301",
+      "isFilled": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "adventure-packs",
+  "title": "Adventures & Packs",
+  "shortTitle": "PACKS",
+  "targetAsset": "adventure",
+  "icon": "Boxes",
+  "renderer": "kit-manager",
+  "description": "Assemble adventure packs, check required gear slots, and verify completeness before hitting the trail.",
+  "config": {
+    "allowQuickAssign": true,
+    "showSensorsPool": true
+  }
+}

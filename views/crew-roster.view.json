@@ -1,0 +1,12 @@
+{
+  "id": "crew-roster",
+  "title": "Friends & Crew Roster",
+  "shortTitle": "CREW",
+  "targetAsset": "person",
+  "icon": "Users",
+  "renderer": "users-manager",
+  "description": "Directory of crew members, adventure roles, owned gear, and contact channels.",
+  "config": {
+    "searchable": true
+  }
+}

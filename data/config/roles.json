@@ -1,0 +1,15 @@
+{
+  "Admin": [
+    "all"
+  ],
+  "Organizer": [
+    "read",
+    "write",
+    "pack",
+    "dispatch"
+  ],
+  "Member": [
+    "read",
+    "reserve"
+  ]
+}

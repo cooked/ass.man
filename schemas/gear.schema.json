@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "entity": "gear",
+  "label": "Gear & Equipment",
+  "pluralLabel": "Shared Gear Inventory",
+  "icon": "Cpu",
+  "primaryKey": "code",
+  "properties": {
+    "code": { "type": "string", "label": "Gear Code / DataMatrix", "required": true },
+    "name": { "type": "string", "label": "Item Name", "required": true },
+    "category": {
+      "type": "string",
+      "label": "Gear Category",
+      "enum": ["Camping", "Photography", "Audio", "Sports", "Board Games"],
+      "required": true
+    },
+    "owner_id": { "type": "string", "label": "Owner Friend ID" },
+    "condition": {
+      "type": "string",
+      "label": "Item Condition",
+      "enum": ["Mint", "Good", "Worn", "Needs Repair"],
+      "default": "Good"
+    },
+    "weight_kg": { "type": "number", "label": "Weight (kg)", "default": 1.0 },
+    "status": {
+      "type": "string",
+      "label": "Deployment Status",
+      "enum": ["ready", "packed", "in_use", "repair"],
+      "default": "ready"
+    }
+  },
+  "relations": {
+    "owner": {
+      "type": "belongsTo",
+      "target": "person",
+      "foreignKey": "owner_id"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "adventure_code": "ADV-BEACH-BBQ",
+  "title": "Cala Violina Sunset Chill & Acoustic Jam",
+  "destination_id": "secret-beach-cove",
+  "organizer_id": "sofia-chen",
+  "date": "2026-11-02",
+  "difficulty": "Chill",
+  "status": "planning",
+  "expected_spec": "1 x Camping, 1 x Audio, 1 x Board Games",
+  "slots": [
+    {
+      "slotId": 1,
+      "requiredType": "Camping",
+      "filledWithSerial": "GEAR-COOK-501",
+      "isFilled": true
+    },
+    {
+      "slotId": 2,
+      "requiredType": "Audio",
+      "filledWithSerial": "",
+      "isFilled": false
+    },
+    {
+      "slotId": 3,
+      "requiredType": "Board Games",
+      "filledWithSerial": "",
+      "isFilled": false
+    }
+  ]
+}

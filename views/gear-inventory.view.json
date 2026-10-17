@@ -1,0 +1,63 @@
+{
+  "id": "gear-inventory",
+  "title": "Gear & Gear Inventory",
+  "shortTitle": "GEAR",
+  "targetAsset": "gear",
+  "icon": "Cpu",
+  "renderer": "spreadsheet-grid",
+  "description": "Complete equipment catalog with conditions, weights, owners, and instant DataMatrix lookup.",
+  "config": {
+    "searchable": true,
+    "virtualized": true,
+    "defaultSort": {
+      "field": "code",
+      "order": "asc"
+    },
+    "columns": [
+      {
+        "field": "code",
+        "label": "Item Code / Tag",
+        "width": 170,
+        "pinned": true,
+        "renderer": "mono-badge"
+      },
+      {
+        "field": "name",
+        "label": "Item Name",
+        "width": 240,
+        "renderer": "text"
+      },
+      {
+        "field": "category",
+        "label": "Category",
+        "width": 130,
+        "renderer": "type-pill"
+      },
+      {
+        "field": "condition",
+        "label": "Condition",
+        "width": 120,
+        "renderer": "status-badge"
+      },
+      {
+        "field": "weight_kg",
+        "label": "Weight (kg)",
+        "width": 110,
+        "renderer": "number"
+      },
+      {
+        "field": "status",
+        "label": "Status",
+        "width": 120,
+        "renderer": "status-badge"
+      },
+      {
+        "field": "owner.name",
+        "label": "Owner Friend",
+        "width": 160,
+        "renderer": "relation-link",
+        "fallback": "— (Community Pool)"
+      }
+    ]
+  }
+}

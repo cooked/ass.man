@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "entity": "person",
+  "label": "Friend / Crew Member",
+  "pluralLabel": "Crew & Friends",
+  "icon": "Users",
+  "primaryKey": "id",
+  "properties": {
+    "id": { "type": "string", "label": "Member ID" },
+    "name": { "type": "string", "label": "Full Name", "required": true },
+    "nickname": { "type": "string", "label": "Nickname" },
+    "role": {
+      "type": "string",
+      "label": "Crew Role / Vibe",
+      "enum": ["The Navigator", "The Chef", "The Photographer", "The DJ / Audio", "The Driver", "Camp Master"]
+    },
+    "email": { "type": "string", "label": "Email Contact" },
+    "avatar_color": { "type": "string", "label": "Avatar Color", "default": "#e11d48" },
+    "status": {
+      "type": "string",
+      "label": "Availability",
+      "enum": ["active", "traveling", "offline"],
+      "default": "active"
+    },
+    "favorite_activity": { "type": "string", "label": "Favorite Activity" }
+  },
+  "relations": {
+    "gear": {
+      "type": "hasMany",
+      "target": "gear",
+      "foreignKey": "owner_id"
+    }
+  }
+}

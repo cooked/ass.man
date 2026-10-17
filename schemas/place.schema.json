@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "entity": "place",
+  "label": "Place / Destination",
+  "pluralLabel": "Places to Go",
+  "icon": "MapPin",
+  "primaryKey": "id",
+  "properties": {
+    "id": { "type": "string", "label": "Place ID" },
+    "title": { "type": "string", "label": "Destination Title", "required": true },
+    "category": {
+      "type": "string",
+      "label": "Category",
+      "enum": ["Mountain Cabin", "Beach Spot", "Rooftop Terrace", "Hiking Trail", "Retro Arcade", "Lakeside Camp"]
+    },
+    "city": { "type": "string", "label": "City / Region" },
+    "latitude": { "type": "number", "label": "Latitude", "required": true },
+    "longitude": { "type": "number", "label": "Longitude", "required": true },
+    "rating": { "type": "number", "label": "Vibe Rating (1-5)", "default": 5 },
+    "best_season": { "type": "string", "label": "Best Season", "enum": ["Spring", "Summer", "Autumn", "Winter", "Year-round"] },
+    "description": { "type": "string", "label": "Description & Notes" }
+  }
+}

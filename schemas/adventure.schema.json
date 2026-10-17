@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "entity": "adventure",
+  "label": "Adventure Pack",
+  "pluralLabel": "Adventure Activity Packs",
+  "icon": "Boxes",
+  "primaryKey": "adventure_code",
+  "properties": {
+    "adventure_code": { "type": "string", "label": "Pack Code", "required": true },
+    "title": { "type": "string", "label": "Adventure Title", "required": true },
+    "destination_id": { "type": "string", "label": "Destination Place ID" },
+    "organizer_id": { "type": "string", "label": "Lead Organizer ID" },
+    "date": { "type": "string", "label": "Target Date" },
+    "difficulty": { "type": "string", "label": "Difficulty / Level", "enum": ["Easy", "Moderate", "Challenging", "Chill"] },
+    "status": {
+      "type": "string",
+      "label": "Readiness",
+      "enum": ["planning", "ready_to_go", "completed"],
+      "default": "planning"
+    },
+    "expected_spec": { "type": "string", "label": "Required Gear Specification" },
+    "slots": {
+      "type": "array",
+      "label": "Required Equipment Slots",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slotId": { "type": "number" },
+          "requiredType": { "type": "string" },
+          "filledWithSerial": { "type": "string" },
+          "isFilled": { "type": "boolean" }
+        }
+      }
+    }
+  },
+  "relations": {
+    "destination": {
+      "type": "belongsTo",
+      "target": "place",
+      "foreignKey": "destination_id"
+    },
+    "organizer": {
+      "type": "belongsTo",
+      "target": "person",
+      "foreignKey": "organizer_id"
+    }
+  }
+}

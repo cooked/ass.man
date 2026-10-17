@@ -1,0 +1,10 @@
+{
+  "appName": "ass.man",
+  "appDescription": "Asset Manager — Schema-Driven Zero-DB Asset Orchestration Engine",
+  "storagePath": "./data",
+  "schemasPath": "./schemas",
+  "viewsPath": "./views",
+  "lockTimeoutMinutes": 10,
+  "httpPort": 3100,
+  "httpsPort": 3101
+}

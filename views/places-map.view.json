@@ -1,0 +1,16 @@
+{
+  "id": "places-map",
+  "title": "Destinations & Hangouts",
+  "shortTitle": "MAP",
+  "targetAsset": "place",
+  "icon": "MapPin",
+  "renderer": "customers-map",
+  "description": "Interactive geographic map of cabins, camps, secret coves, and urban hangouts.",
+  "config": {
+    "initialCenter": [
+      44.5,
+      11.3
+    ],
+    "initialZoom": 7
+  }
+}

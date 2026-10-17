@@ -1,0 +1,54 @@
+{
+  "name": "ass.man",
+  "version": "1.0.0",
+  "description": "The schema-driven, zero-database asset orchestration engine for modern hardware, field teams, and modular collections.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "assman": "./bin/assman.cjs"
+  },
+  "keywords": [
+    "asset-management",
+    "schema-driven",
+    "zero-database",
+    "offline-first",
+    "json-schema",
+    "web-ar",
+    "datamatrix",
+    "field-terminal"
+  ],
+  "scripts": {
+    "dev": "tsx dev.ts",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "start": "NODE_ENV=production node dist/server.cjs",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/qrcode": "^1.5.6",
+    "@vitejs/plugin-react": "^5.0.4",
+    "@zxing/library": "^0.23.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  }
+}
