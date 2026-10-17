@@ -1,6 +1,3 @@
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 import https from "https";
 import QRCode from "qrcode";
 import { execFile } from "child_process";
@@ -245,7 +242,7 @@ app.get(["/api/companion/qr-pair", "/api/companion/qr"], async (req, res) => {
     const ip = getLocalIpv4();
     const certCandidates = [
       path.join(baseDir, ".cert", "cert.pem"),
-      path.join(path.resolve(__dirname, ".."), ".cert", "cert.pem")
+      path.join(path.resolve(typeof __dirname !== "undefined" ? __dirname : process.cwd(), ".."), ".cert", "cert.pem")
     ];
     const hasHttps = certCandidates.some(c => fs.existsSync(c));
 
