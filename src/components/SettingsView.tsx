@@ -11,13 +11,15 @@ interface SettingsViewProps {
   onUserChange?: (username: string) => void;
   onRefresh: () => void;
   activeLocks: any[];
+  onForceUnlock?: (assetType: string, assetId: string) => Promise<void>;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   currentUser,
   onUserChange,
   onRefresh,
-  activeLocks
+  activeLocks,
+  onForceUnlock
 }) => {
   const [dataPath, setDataPath] = useState("./data");
   const [lockTimeoutMinutes, setLockTimeoutMinutes] = useState(10);
@@ -124,11 +126,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
   const handleForceUnlock = async (lock: any) => {
     if (confirm(`Force release lock on ${lock.assetType} ${lock.assetId} held by ${lock.userName}?`)) {
-      await fetch("/api/locks/force-unlock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assetType: lock.assetType, assetId: lock.assetId })
-      });
+      if (onForceUnlock) {
+        await onForceUnlock(lock.assetType, lock.assetId);
+      } else {
+        await fetch("/api/locks/force-unlock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ assetType: lock.assetType, assetId: lock.assetId })
+        });
+      }
       onRefresh();
     }
   };

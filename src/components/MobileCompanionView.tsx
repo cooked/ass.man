@@ -11,7 +11,8 @@ import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from "@zxing/
 
 interface MobileCompanionViewProps {
   onBackToDesktop?: () => void;
-  currentUser: string;
+  onClose?: () => void;
+  currentUser?: string;
 }
 
 interface DetectedMarker {
@@ -34,8 +35,10 @@ interface DetectedMarker {
 
 export const MobileCompanionView: React.FC<MobileCompanionViewProps> = ({
   onBackToDesktop,
-  currentUser
+  onClose,
+  currentUser = "User"
 }) => {
+  const handleBack = onBackToDesktop || onClose;
   const [scanTarget, setScanTarget] = useState<"kit" | "stock">("kit");
 
   const [kits, setKits] = useState<any[]>([]);
@@ -1014,9 +1017,9 @@ export const MobileCompanionView: React.FC<MobileCompanionViewProps> = ({
         <div className="flex items-center justify-between gap-2 pointer-events-auto">
           {/* Left: Desktop back & App badge */}
           <div className="flex items-center space-x-1.5">
-            {onBackToDesktop && (
+            {handleBack && (
               <button
-                onClick={onBackToDesktop}
+                onClick={handleBack}
                 className="p-2 bg-slate-900/75 hover:bg-slate-900 backdrop-blur-md border border-white/10 rounded-xl text-slate-300 hover:text-white cursor-pointer shadow-lg"
                 title="Desktop View"
               >

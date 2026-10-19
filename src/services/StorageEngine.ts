@@ -64,7 +64,7 @@ export class StorageEngine {
   public getViews(): ViewDefinition[] {
     if (!fs.existsSync(this.viewsDir)) return [];
     const files = fs.readdirSync(this.viewsDir);
-    return files
+    const views = files
       .filter(f => f.endsWith(".view.json") || f.endsWith(".json"))
       .map(f => {
         try {
@@ -75,6 +75,37 @@ export class StorageEngine {
         }
       })
       .filter((v): v is ViewDefinition => v !== null && !!v.id);
+
+    // Read viewsOrder if configured in app-config.json
+    let viewsOrder: string[] = [];
+    const configPath = path.join(this.baseDir, "app-config.json");
+    if (fs.existsSync(configPath)) {
+      try {
+        const cfg = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+        if (Array.isArray(cfg.viewsOrder)) viewsOrder = cfg.viewsOrder;
+      } catch {}
+    }
+
+    const defaultOrder = [
+      "sensors_grid", "sensor", "sensors", "gear",
+      "kits_management", "kit", "kits", "adventure",
+      "firmware_management", "firmware",
+      "customers_map", "customer", "customers", "map", "places_map", "place"
+    ];
+
+    const orderToUse = viewsOrder.length > 0 ? viewsOrder : defaultOrder;
+
+    return views.sort((a, b) => {
+      const getIndex = (v: ViewDefinition) => {
+        const idx = orderToUse.findIndex(
+          o => o.toLowerCase() === v.id.toLowerCase() ||
+               o.toLowerCase() === v.targetAsset?.toLowerCase() ||
+               v.id.toLowerCase().includes(o.toLowerCase())
+        );
+        return idx !== -1 ? idx : 999;
+      };
+      return getIndex(a) - getIndex(b);
+    });
   }
 
   // --- Asset Directory Resolution ---

@@ -227,6 +227,18 @@ function parseExpectedSpec(spec: string): { type: string; count: number }[] {
   return requirements;
 }
 
+function getLocalIpv4(): string {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name] || []) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "localhost";
+}
+
 function inferSensorTypeFromSerial(serial: string): string {
   const upper = serial.toUpperCase();
   if (upper.includes("-Z-") || upper.startsWith("Z-")) return "Z";

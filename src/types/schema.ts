@@ -57,7 +57,7 @@ export interface ViewDefinition {
   shortTitle?: string;
   targetAsset: string;
   icon?: string;
-  renderer: 'spreadsheet-grid' | 'kit-manager' | 'customers-map' | 'users-manager' | 'generic';
+  renderer: 'spreadsheet-grid' | 'kit-manager' | 'customers-map' | 'users-manager' | 'firmware-manager' | 'generic';
   description?: string;
   config?: {
     searchable?: boolean;
@@ -135,3 +135,60 @@ export interface PersonAsset extends GenericAsset {
   status?: string;
   favorite_activity?: string;
 }
+
+export interface SensorAsset extends GenericAsset {
+  serial_number: string;
+  sensor_type: string;
+  hw_version: string;
+  fw_version: string;
+  status: string;
+  kit_id?: string;
+  customer_id?: string;
+  scan_date?: string;
+  notes?: string;
+  [key: string]: any;
+}
+
+export interface KitAsset extends GenericAsset {
+  kit_code: string;
+  kit_name: string;
+  target_machine?: string;
+  customer_id?: string;
+  status: string;
+  expected_spec?: string;
+  creation_date?: string;
+  notes?: string;
+  slots?: any[];
+  [key: string]: any;
+}
+
+export interface CustomerAsset extends GenericAsset {
+  code?: string;
+  id?: string;
+  company_name?: string;
+  title?: string;
+  plant_name?: string;
+  address?: string;
+  city?: string;
+  lat?: number;
+  latitude?: number;
+  lng?: number;
+  longitude?: number;
+  contact_person?: string;
+  contact_email?: string;
+  phone?: string;
+  [key: string]: any;
+}
+
+export interface FirmwareAsset extends GenericAsset {
+  fw_code: string;
+  version: string;
+  sensor_type: string;
+  status: string;
+  min_hw_version?: string;
+  release_date?: string;
+  checksum?: string;
+  changelog?: string;
+  [key: string]: any;
+}
+

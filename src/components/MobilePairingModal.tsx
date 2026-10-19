@@ -9,14 +9,14 @@ import {
 interface MobilePairingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentUser: string;
-  onOpenMobileView: () => void;
+  currentUser?: string;
+  onOpenMobileView?: () => void;
 }
 
 export const MobilePairingModal: React.FC<MobilePairingModalProps> = ({
   isOpen,
   onClose,
-  currentUser,
+  currentUser = "User",
   onOpenMobileView
 }) => {
   const [pairingData, setPairingData] = useState<{

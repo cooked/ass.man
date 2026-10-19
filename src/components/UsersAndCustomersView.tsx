@@ -20,6 +20,9 @@ interface UsersAndCustomersViewProps {
   onUserChange?: (username: string) => void;
   onSelectCustomerOnMap?: (customerCode: string) => void;
   onRefresh: () => void;
+  customers?: any[];
+  kits?: any[];
+  sensors?: any[];
 }
 
 const AVAILABLE_PERMISSIONS: { key: string; label: string; desc: string }[] = [

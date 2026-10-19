@@ -30,11 +30,6 @@ const iconMap: Record<string, React.ReactNode> = {
   Users: <Users className="w-4 h-4" />
 };
 
-  const shortName = appConfig?.appShortName || (appConfig?.appName?.toUpperCase().includes("BONFIGLIOLI") ? "BOM" : "ass.man");
-  const appName = appConfig?.appName || "Asset Manager";
-  const subtitle = appConfig?.appSubtitle || (shortName === "BOM" ? "Piattaforma Tracciamento Sensori IoT, Kit & Impianti" : "Schema-Driven Orchestration & Field Terminal");
-  const isRose = appConfig?.brandColor === "rose" || shortName === "BOM";
-
 export const Navbar: React.FC<NavbarProps> = ({
   views,
   activeViewId,
@@ -49,6 +44,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   userRole,
   appConfig
 }) => {
+  const shortName = appConfig?.appShortName || (appConfig?.appName?.toUpperCase().includes("BONFIGLIOLI") ? "BOM" : "ass.man");
+  const appName = appConfig?.appName || "Asset Manager";
+  const subtitle = appConfig?.appSubtitle || (shortName === "BOM" ? "Piattaforma Tracciamento Sensori IoT, Kit & Impianti" : "Schema-Driven Orchestration & Field Terminal");
+  const isRose = appConfig?.brandColor === "rose" || shortName === "BOM";
+
   return (
     <header className="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

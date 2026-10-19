@@ -4,20 +4,22 @@ import { SensorAsset, KitAsset, CustomerAsset } from "../types/schema";
 
 interface AssetDetailModalProps {
   sensor: SensorAsset | null;
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
-  kits: KitAsset[];
-  customers: CustomerAsset[];
+  kits?: KitAsset[];
+  customers?: CustomerAsset[];
+  schema?: any;
+  currentUser?: string;
   onSave: (updated: SensorAsset) => Promise<void>;
   onDelete: (serialNumber: string) => Promise<void>;
 }
 
 export const AssetDetailModal: React.FC<AssetDetailModalProps> = ({
   sensor,
-  isOpen,
+  isOpen = true,
   onClose,
-  kits,
-  customers,
+  kits = [],
+  customers = [],
   onSave,
   onDelete
 }) => {

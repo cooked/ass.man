@@ -6,15 +6,18 @@ interface DataMatrixImporterModalProps {
   isOpen: boolean;
   onClose: () => void;
   kits: KitAsset[];
-  onIngestSuccess: () => void;
+  onIngestSuccess?: () => void;
+  onImportSuccess?: () => void;
 }
 
 export const DataMatrixImporterModal: React.FC<DataMatrixImporterModalProps> = ({
   isOpen,
   onClose,
   kits,
-  onIngestSuccess
+  onIngestSuccess,
+  onImportSuccess
 }) => {
+  const handleSuccess = onIngestSuccess || onImportSuccess;
   const [rawText, setRawText] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
   const [parsedSerials, setParsedSerials] = useState<any[]>([]);
@@ -104,7 +107,7 @@ BFG-OMEGA-77130`;
 
       const data = await res.json();
       setResultMessage(`Ingestion successful! New sensors: ${data.importedCount}, Updated: ${data.updatedCount}`);
-      onIngestSuccess();
+      handleSuccess?.();
       setTimeout(() => {
         onClose();
       }, 1500);
